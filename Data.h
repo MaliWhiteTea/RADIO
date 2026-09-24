@@ -13,6 +13,8 @@ namespace Pins {
   constexpr int SEEK_DOWN_PIN = 14;
   constexpr int I2C_SDA_PIN = 21;
   constexpr int I2C_SCL_PIN = 22;
+  constexpr int DAC_OUT_PIN = 25;   // ESP32 DAC1 — jingle
+  constexpr int DAC2_OUT_PIN = 26;  // ESP32 DAC2 — opsiyonel L+R
   // constexpr int FAV_PIN = ??;
 }
 
@@ -36,7 +38,7 @@ namespace RadioCfg {
   constexpr float FREQ_MAX_MHZ = 108.0f;
   constexpr float FREQ_STEP_MHZ = 0.1f;
 
-  constexpr float DEFAULT_FREQ_MHZ = 106.5f;
+  constexpr float DEFAULT_FREQ_MHZ = 93.1f;
   constexpr uint8_t DEFAULT_VOLUME = 6;
   constexpr uint8_t VOLUME_MAX = 15;
   constexpr bool DEFAULT_BASS = false;
@@ -55,6 +57,20 @@ namespace RadioCfg {
   constexpr unsigned long INIT_DELAY_MS = 60;
   constexpr unsigned long INIT_TUNE_WAIT_EXTRA_MS = 200;
   constexpr uint8_t RSSI_WEAK_THRESHOLD = 20;
+}
+
+// ===================== SES / JINGLE (DAC) =====================
+namespace AudioCfg {
+  constexpr bool PLAY_ON_BOOT = true;
+  constexpr bool MUTE_RADIO_WHILE_PLAYING = true;
+  constexpr uint8_t DAC_IDLE_LEVEL = 128;
+  constexpr float DAC_GAIN = 3.0f;
+  // Zayif duyulursa LOUD_MODE raylara iter (bozuk ama yuksek)
+  constexpr bool LOUD_MODE = true;
+  constexpr int LOUD_THRESHOLD = 8;
+  constexpr int LOUD_PUSH = 4;
+  // Sadece LIN: GPIO25. GPIO26 kullanilmiyor.
+  constexpr bool USE_SECOND_DAC = false;
 }
 
 // ===================== LED =====================

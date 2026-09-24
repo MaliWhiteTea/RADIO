@@ -8,21 +8,24 @@
 #include "Favorites.h"
 #include "Buttons.h"
 #include "SerialCmd.h"
+#include "Audio.h"
 
 void setup() {
   serialCmdInit();
 
   // Pin tesisi — GPIO output hatasindan ONCE gorunsun
-  Serial.printf("PINS LED=%d UP=%d DOWN=%d SDA=%d SCL=%d\n",
+  Serial.printf("PINS LED=%d UP=%d DOWN=%d SDA=%d SCL=%d DAC=%d\n",
                 Pins::LED_PIN,
                 Pins::SEEK_UP_PIN,
                 Pins::SEEK_DOWN_PIN,
                 Pins::I2C_SDA_PIN,
-                Pins::I2C_SCL_PIN);
+                Pins::I2C_SCL_PIN,
+                Pins::DAC_OUT_PIN);
 
   favoritesInit();
   ledInit();
   buttonsInit();
+  audioInit();
 
   Serial.println();
   Serial.println("RDA5807M baslatiliyor...");
@@ -36,12 +39,17 @@ void setup() {
     serialPrintStatus();
   }
 
+  if (AudioCfg::PLAY_ON_BOOT) {
+    audioPlayJingle();
+  }
+
   serialPrintHelp();
 }
 
 void loop() {
   radioUpdate();
   ledUpdate();
+  audioUpdate();
   serialHandleRadioEvents();
   buttonsUpdate();
   serialCmdUpdate();

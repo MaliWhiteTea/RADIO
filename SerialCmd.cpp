@@ -3,6 +3,7 @@
 #include "Radio.h"
 #include "Led.h"
 #include "Favorites.h"
+#include "Audio.h"
 #include <string.h>
 
 static char cmdBuf[SerialCfg::CMD_BUF_SIZE];
@@ -20,6 +21,7 @@ void serialPrintHelp() {
   Serial.printf("  GP%d    sonraki frekans\n", Pins::SEEK_UP_PIN);
   Serial.printf("  GP%d    onceki frekans\n", Pins::SEEK_DOWN_PIN);
   Serial.println("  led on / led off / led");
+  Serial.println("  jingle        DAC jingle cal");
   Serial.println("  radio reset   RDA yeniden baslat");
   Serial.println("  ?       durum + RSSI");
   Serial.println("  h       yardim");
@@ -163,6 +165,8 @@ static void handleCommand(char *cmd) {
       Serial.printf("HATA: radio init (%s)\n",
                     radioInitErrorStr(radioGetInitError()));
     }
+  } else if (strcmp(cmd, "jingle") == 0) {
+    audioPlayJingle();
   } else if (strcmp(cmd, "led on") == 0) {
     ledSet(true);
     Serial.println("LED ON");
