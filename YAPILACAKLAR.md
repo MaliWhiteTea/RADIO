@@ -1,9 +1,25 @@
 # RADIO — Yapılacaklar / Notlar
 
-**Son güncelleme:** 2026-08-21
+**Son güncelleme:** 2026-09-24
 
-**Yedek commit (jingle öncesi):** `efedf83`  
-Geri dönüş: `git reset --hard efedf83`
+## Sürüm noktaları
+
+- **Son kayıtlı beta:** `3f94fec` — `radio beta 1` (2026-09-24)
+- **Jingle öncesi yedek:** `efedf83` — `Snapshot before PCM DAC jingle experiment.` (2026-08-21)
+
+Geri dönüş gerekirse önce mevcut değişiklikleri commit et veya yedekle. Ardından
+istenen commit'i incelemek için `git switch --detach <commit>` kullanılabilir.
+
+## Öncelikli düzeltmeler
+
+- [ ] RDA5807M `REG05_BASE = 0x9080` değerini veri sayfası ve kullanılan modülle doğrula
+  - Ayrılmış bit 12 şu anda `1`
+  - `SEEKTH` alanı şu anda `0`; istasyon arama hassasiyetini etkileyebilir
+- [ ] `REG04_VALUE = 0x0C00` değerindeki ayrılmış bit 10'u ve soft-mute tercihini doğrula
+- [ ] Jingle öncesindeki mute durumunu sakla; jingle bitince aynı durumu geri yükle
+- [ ] DAC örneklemesini ana döngü yerine timer veya I2S/DMA ile kararlı hale getir
+- [ ] Favori kaydından önce `radioIsReady()` ve `frequencyValid` kontrolü yap
+- [ ] Arduino IDE veya `arduino-cli` ile temiz ESP32 derlemesi doğrula
 
 ## Donanım
 
@@ -20,7 +36,10 @@ Geri dönüş: `git reset --hard efedf83`
 
 ## Yazılım / özellik
 
+- [x] Proje README dosyası
 - [ ] Favori tuşu (yıldız) — pin ata; kısa=git, uzun=kaydet (altyapı hazır)
+- [ ] Favoriler için seri komutlar ekle (`fav save`, `fav 1` vb.)
+- [ ] Altı favori yuvasının tamamını kullanıcı arayüzünden erişilebilir yap
 - [ ] Geçici: tuş basılı tut = ses ayarı → ileride kaldır
 - [ ] Geçici: LED başlangıçta açık → ileride değiştir
 - [ ] `DEBUG_RADIO = false` (iş bitince)
@@ -28,6 +47,8 @@ Geri dönüş: `git reset --hard efedf83`
 - [ ] AUX girişi (ileride)
 - [ ] Flash / son frekans-ses kaydı (ileride)
 - [ ] Jingle kalitesi / `LOUD_MODE` gözden geçir (bozulma vs ses)
+- [ ] Jingle çalarken gelen mute/seek/tune komutlarının davranışını netleştir
+- [ ] Donanım üzerinde tune, seek, timeout ve I2C kopma senaryolarını test et
 
 ## Jingle (PCM + DAC)
 
