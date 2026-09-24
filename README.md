@@ -2,6 +2,8 @@
 
 ESP32-WROOM-32E ve RDA5807M alıcı modülü ile geliştirilen FM radyo projesi.
 
+**Sürüm:** `0.2.1`
+
 Proje; FM frekans ayarı, otomatik istasyon arama, ses kontrolü, mute, bass,
 mono/stereo seçimi, NVS tabanlı favoriler, durum LED'i ve ESP32 DAC üzerinden
 açılış jingle'ı özelliklerini içerir.
@@ -47,7 +49,8 @@ GND arasına bağlanmalıdır.
 - Tune/seek işlemleri için bloklamayan durum makinesi
 - I2C hata ve timeout raporlama
 - ESP32 Preferences/NVS ile 6 favori yuvası altyapısı
-- 8 kHz, 8-bit PCM DAC jingle'ı
+- Radyo ses seviyesinden bağımsız, 16 kHz/8-bit mono PCM DAC jingle'ı
+- Jingle sonrasında önceki mute ve ses seviyesi durumunu geri yükleme
 - Bloklamayan LED yanıp sönme yönetimi
 
 Favori altyapısı hazırdır ancak favori düğmesi ve seri port komutları henüz
@@ -105,7 +108,7 @@ düğmeler veya encoder ile değiştirilebilir.
 | `Favorites.h/.cpp` | NVS tabanlı favori yönetimi |
 | `Led.h/.cpp` | LED durumu ve yanıp sönme yönetimi |
 | `Audio.h/.cpp` | DAC üzerinden PCM jingle çalma |
-| `JingleData.h` | Flash'ta tutulan 8-bit PCM örnekleri |
+| `JingleData.h` | Flash'ta tutulan 16 kHz/8-bit mono PCM örnekleri |
 | `YAPILACAKLAR.md` | Donanım ve yazılım geliştirme listesi |
 
 ## Ayarlar
@@ -123,12 +126,21 @@ içindedir. Başlıca ayarlar:
 
 ## Mevcut durum
 
+- Proje sürümü: `0.2.1`
 - Son kayıtlı sürüm: `radio beta 1`
 - Son kayıtlı kaynak commit'i: `3f94fec` (2026-09-24)
 - Jingle öncesi geri dönüş noktası: `efedf83` (2026-08-21)
 
 Bilinen geliştirme maddeleri ve öncelikler için [YAPILACAKLAR.md](YAPILACAKLAR.md)
 dosyasına bakın.
+
+Jingle verisini farklı bir kaynak dosyadan yeniden üretmek için proje kökünde:
+
+```bash
+python3 tools/generate_jingle.py /kaynak/ses.mp3
+```
+
+Komut, `tools/jingle_16k_u8.pcm` ve `JingleData.h` dosyalarını oluşturur.
 
 ## Önemli notlar
 

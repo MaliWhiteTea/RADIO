@@ -13,6 +13,8 @@
 void setup() {
   serialCmdInit();
 
+  Serial.printf("RADIO v%s\n", ProjectCfg::VERSION);
+
   // Pin tesisi — GPIO output hatasindan ONCE gorunsun
   Serial.printf("PINS LED=%d UP=%d DOWN=%d SDA=%d SCL=%d DAC=%d\n",
                 Pins::LED_PIN,

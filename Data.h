@@ -6,6 +6,11 @@
 
 #include <Arduino.h>
 
+// ===================== PROJE =====================
+namespace ProjectCfg {
+  constexpr const char *VERSION = "0.2.1";
+}
+
 // ===================== PINLER =====================
 namespace Pins {
   constexpr int LED_PIN = 27;
@@ -64,6 +69,7 @@ namespace AudioCfg {
   constexpr bool PLAY_ON_BOOT = true;
   constexpr bool MUTE_RADIO_WHILE_PLAYING = true;
   constexpr uint8_t DAC_IDLE_LEVEL = 128;
+  // Jingle, radyo ses seviyesinden bagimsiz olarak bu sabit maksimum ayarla calar.
   constexpr float DAC_GAIN = 3.0f;
   // Zayif duyulursa LOUD_MODE raylara iter (bozuk ama yuksek)
   constexpr bool LOUD_MODE = true;

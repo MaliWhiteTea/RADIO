@@ -12,7 +12,11 @@ static size_t playIndex = 0;
 static bool playing = false;
 static unsigned long nextSampleUs = 0;
 static const unsigned long SAMPLE_PERIOD_US = 1000000UL / JINGLE_SAMPLE_RATE;
-static bool mutedRadioForPlay = false;
+static const unsigned long SAMPLE_PERIOD_REMAINDER = 1000000UL % JINGLE_SAMPLE_RATE;
+static unsigned long sampleClockRemainder = 0;
+static bool radioStateSaved = false;
+static bool savedRadioMuted = false;
+static uint8_t savedRadioVolume = 0;
 
 static uint8_t shapeSample(uint8_t s) {
   int c = (int)s - 128;
@@ -40,6 +44,8 @@ static uint8_t shapeSample(uint8_t s) {
 void audioInit() {
   playing = false;
   playIndex = 0;
+  sampleClockRemainder = 0;
+  radioStateSaved = false;
   dacWrite(Pins::DAC_OUT_PIN, AudioCfg::DAC_IDLE_LEVEL);
   // Stereo amp ise L+R baglanabilir
   if (AudioCfg::USE_SECOND_DAC) {
@@ -65,10 +71,23 @@ void audioStop() {
   if (AudioCfg::USE_SECOND_DAC) {
     dacWrite(Pins::DAC2_OUT_PIN, AudioCfg::DAC_IDLE_LEVEL);
   }
-  if (mutedRadioForPlay) {
-    mutedRadioForPlay = false;
+  if (radioStateSaved) {
+    radioStateSaved = false;
     if (radioIsReady() && !radioIsBusy()) {
-      radioSetMute(false);
+      // Once ses seviyesini radyo susturulmusken geri al, sonra onceki mute
+      // durumunu uygula. Boylece ses aciksa eski seviyesinde, kapaliysa kapali kalir.
+      bool restored = true;
+      if (g_radio.volume != savedRadioVolume) {
+        restored = radioSetVolume(savedRadioVolume);
+      }
+      if (g_radio.muted != savedRadioMuted) {
+        restored = radioSetMute(savedRadioMuted) && restored;
+      }
+      if (!restored) {
+        Serial.println("[AUDIO] Radyo ses durumu geri yuklenemedi");
+      }
+    } else {
+      Serial.println("[AUDIO] Radyo mesgul; ses durumu geri yuklenemedi");
     }
   }
 }
@@ -76,15 +95,24 @@ void audioStop() {
 void audioPlayJingle() {
   if (playing) return;
 
-  if (AudioCfg::MUTE_RADIO_WHILE_PLAYING && radioIsReady() && !radioIsBusy()) {
-    if (radioSetMute(true)) {
-      mutedRadioForPlay = true;
+  radioStateSaved = false;
+  if (radioIsReady() && !radioIsBusy()) {
+    savedRadioMuted = g_radio.muted;
+    savedRadioVolume = g_radio.volume;
+    radioStateSaved = true;
+
+    if (AudioCfg::MUTE_RADIO_WHILE_PLAYING && !g_radio.muted) {
+      if (!radioSetMute(true)) {
+        radioStateSaved = false;
+        Serial.println("[AUDIO] Radyo jingle icin susturulamadi");
+      }
     }
   }
 
   playIndex = 0;
   playing = true;
   nextSampleUs = micros();
+  sampleClockRemainder = 0;
   Serial.println("[AUDIO] Jingle basladi (DAC loud)");
 }
 
@@ -104,5 +132,10 @@ void audioUpdate() {
       dacWrite(Pins::DAC2_OUT_PIN, s);
     }
     nextSampleUs += SAMPLE_PERIOD_US;
+    sampleClockRemainder += SAMPLE_PERIOD_REMAINDER;
+    if (sampleClockRemainder >= JINGLE_SAMPLE_RATE) {
+      nextSampleUs++;
+      sampleClockRemainder -= JINGLE_SAMPLE_RATE;
+    }
   }
 }
