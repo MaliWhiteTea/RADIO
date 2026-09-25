@@ -18,15 +18,16 @@ Aşağıdaki işler önem sırasına göre düzenlenmiştir. Bir aşama tamamlan
 
 ### 1. RDA5807M register ayarlarını doğrula
 
-- [ ] `REG05_BASE = 0x9080` değerini RDA5807M veri sayfasına ve kullanılan
-  modülün bağlantısına göre yeniden belirle. Mevcut değer ayrılmış bit 12'yi
-  etkinleştiriyor ve `SEEKTH` istasyon arama eşiğini sıfır yapıyor.
-- [ ] `REG04_VALUE = 0x0C00` değerindeki ayrılmış bit 10'u temizle. Avrupa için
-  gerekli 50 µs de-emphasis ayarını ve soft-mute tercihini ayrı bit maskeleriyle
-  açık biçimde tanımla.
+- [x] `REG05_BASE` değerini `0x8880` olarak düzelt. Ayrılmış bit 12'yi sıfırda
+  bırak, `SEEKTH` istasyon arama eşiğini veri sayfasındaki varsayılan değer olan
+  `8` yap ve LNA girişini `LNAP` olarak seç.
+- [x] `REG04_VALUE` değerini `0x0A00` olarak düzelt. Ayrılmış bit 10'u sıfırda
+  bırak, Avrupa için 50 µs de-emphasis ve soft-mute özelliklerini ayrı bit
+  maskeleriyle etkinleştir.
 - [ ] Yeni register değerlerini zayıf ve güçlü istasyonlarda dene. Seek işleminin
   gürültüyü istasyon olarak kabul etmediğini ve gerçek istasyonları atlamadığını
-  doğrula.
+  doğrula. Bu madde gerçek RDA5807M, anten ve farklı sinyal seviyeleriyle donanım
+  testi gerektirir.
 
 ### 2. Son kullanılan radyo ayarlarını NVS'ye kaydet
 

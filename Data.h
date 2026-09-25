@@ -52,8 +52,37 @@ namespace RadioCfg {
   constexpr bool DEFAULT_FREQUENCY_VALID = false;
 
   constexpr uint16_t REG02_BASE = 0xC00D;
-  constexpr uint16_t REG04_VALUE = 0x0C00;
-  constexpr uint16_t REG05_BASE = 0x9080;
+
+  // Register 0x04: Avrupa FM yayini icin 50 us de-emphasis ve soft-mute.
+  // Ayrilmis bitler her zaman sifir birakilir.
+  constexpr uint16_t REG04_DE_50US_BIT = (1u << 11);
+  constexpr uint16_t REG04_SOFT_MUTE_BIT = (1u << 9);
+  constexpr uint16_t REG04_VALUE =
+      REG04_DE_50US_BIT |
+      REG04_SOFT_MUTE_BIT;  // 0x0A00
+
+  // Register 0x05: datasheet varsayilani SEEKTH=8 ve LNAP girisi.
+  // Bit 12 ayrilmistir ve sifir kalmalidir.
+  constexpr uint8_t SEEK_THRESHOLD = 8;
+  constexpr uint8_t LNA_PORT_SELECT = 2;  // 2 = LNAP
+  constexpr uint8_t LNA_CURRENT = 0;      // 0 = 1.8 mA
+  constexpr uint16_t REG05_INT_MODE_BIT = (1u << 15);
+  constexpr uint16_t REG05_SEEK_THRESHOLD_BITS =
+      ((uint16_t)(SEEK_THRESHOLD & 0x0F) << 8);
+  constexpr uint16_t REG05_LNA_PORT_BITS =
+      ((uint16_t)(LNA_PORT_SELECT & 0x03) << 6);
+  constexpr uint16_t REG05_LNA_CURRENT_BITS =
+      ((uint16_t)(LNA_CURRENT & 0x03) << 4);
+  constexpr uint16_t REG05_BASE =
+      REG05_INT_MODE_BIT |
+      REG05_SEEK_THRESHOLD_BITS |
+      REG05_LNA_PORT_BITS |
+      REG05_LNA_CURRENT_BITS;  // 0x8880
+
+  static_assert((REG04_VALUE & (1u << 10)) == 0,
+                "RDA5807M REG04 reserved bit 10 must remain zero");
+  static_assert((REG05_BASE & (1u << 12)) == 0,
+                "RDA5807M REG05 reserved bit 12 must remain zero");
 
   constexpr unsigned long STATUS_POLL_MS = 50;
   constexpr unsigned long OPERATION_MIN_SETTLE_MS = 50;  // komut yazimindan sonra min bekleme

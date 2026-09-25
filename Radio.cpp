@@ -309,6 +309,11 @@ bool radioInit() {
   if (RadioCfg::DEBUG_RADIO) {
     Serial.printf("[RADIO] Wire.begin SDA=%d SCL=%d\n",
                   Pins::I2C_SDA_PIN, Pins::I2C_SCL_PIN);
+    Serial.printf("[RADIO] CFG REG02=0x%04X REG04=0x%04X REG05=0x%04X SEEKTH=%u\n",
+                  (unsigned)RadioCfg::REG02_BASE,
+                  (unsigned)RadioCfg::REG04_VALUE,
+                  (unsigned)RadioCfg::REG05_BASE,
+                  (unsigned)RadioCfg::SEEK_THRESHOLD);
   }
 
   uint16_t softReset[1] = { 0x0002 };
